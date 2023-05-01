@@ -46,19 +46,20 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let t_2 = 0.0;
 
     // let zoom = pow(globals.time, 4.0) * speed;
-    let seed_0 = sin(tan(globals.time * speed));
-    let seed_1 = sin(tan((globals.time * speed) + 1.57079632679));
+    // let seed_0 = sin(tan(globals.time * speed));
+    // let seed_1 = sin(tan((globals.time * speed) + 1.57079632679));
 
-    let zoom = 4.0;
-    let x = ((in.uv.x - 0.5) * (16.0/ zoom));
-    let y = ((in.uv.y - 0.5) * (9.0 / zoom));
+    // let zoom = 4.0;
+    let zoom = globals.zoom;
+    let x = ((in.uv.x - 0.5) * (16.0/ zoom)) - globals.x;
+    let y = ((in.uv.y - 0.5) * (9.0 / zoom)) - globals.y;
 
-    var z = vec2(seed_0, seed_1);
-    // var z = vec2(0.0,0.0);
+    // var z = vec2(seed_0, seed_1);
+    var z = vec2(0.0,0.0);
     let c = vec2(x, y);
 
     var n = 0.0;
-    let max = 50.0;
+    let max = 5000.0;
     
     // let escape_radius = abs(sin(globals.time* speed) * 3.0);
     let escape_radius = 2.5;

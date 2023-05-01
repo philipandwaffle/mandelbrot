@@ -1,6 +1,4 @@
-use num_complex::Complex64;
-mod mandelbrot;
-
+// use num_complex::Complex64;
 // fn main() {
 //     println!("Hello, world!");
 
@@ -17,12 +15,19 @@ mod mandelbrot;
 //     m.gen_image().save("test_003.jpg");
 // }
 
+mod control;
+mod globals;
 use bevy::{prelude::*, reflect::TypeUuid, render::render_resource::*};
+use control::ControlPlugin;
+use globals::{GlobalsBuffer, GlobalsPlugin};
 
 fn main() {
     App::new()
+        .insert_resource(GlobalsBuffer::default())
         .add_plugins(DefaultPlugins)
         .add_plugin(MaterialPlugin::<MandelbrotMaterial>::default())
+        .add_plugin(GlobalsPlugin)
+        .add_plugin(ControlPlugin)
         .add_startup_system(setup)
         .run();
 }
