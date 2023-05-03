@@ -16,17 +16,13 @@
 // }
 
 mod control;
-mod globals;
 use bevy::{prelude::*, reflect::TypeUuid, render::render_resource::*};
 use control::ControlPlugin;
-use globals::{GlobalsBuffer, GlobalsPlugin};
 
 fn main() {
     App::new()
-        .insert_resource(GlobalsBuffer::default())
         .add_plugins(DefaultPlugins)
         .add_plugin(MaterialPlugin::<MandelbrotMaterial>::default())
-        .add_plugin(GlobalsPlugin)
         .add_plugin(ControlPlugin)
         .add_startup_system(setup)
         .run();
@@ -43,7 +39,13 @@ fn setup(
             flip: false,
         })),
         transform: Transform::from_xyz(0.0, 0.0, 0.0),
-        material: materials.add(MandelbrotMaterial {}),
+        material: materials.add(MandelbrotMaterial {
+            focus: Focus {
+                x: 0.0,
+                y: 0.0,
+                zoom: 4.0,
+            },
+        }),
         ..default()
     });
 
@@ -60,10 +62,19 @@ fn setup(
         ..default()
     });
 }
+#[derive(Debug, Clone, ShaderType)]
+struct Focus {
+    x: f32,
+    y: f32,
+    zoom: f32,
+}
 
 #[derive(AsBindGroup, TypeUuid, Debug, Clone)]
 #[uuid = "a3d71c04-d054-4946-80f8-ba6cfbc90cad"]
-struct MandelbrotMaterial {}
+struct MandelbrotMaterial {
+    #[uniform(0)]
+    focus: Focus,
+}
 impl Material for MandelbrotMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/mandelbrot_shader.wgsl".into()
