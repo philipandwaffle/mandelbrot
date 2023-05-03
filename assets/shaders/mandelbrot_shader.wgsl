@@ -78,12 +78,12 @@ fn pow_complex(z: vec2<f32>, n: f32) -> vec2<f32>{
     return vec2(x,y);
 }
 
-fn simple_pow_complex(z: vec2<f32>, n: f32) -> vec2<f32>{
+fn simple_pow_complex(z: vec2<f32>, n: u32) -> vec2<f32>{
     var res = z;
     var count = n;
-    while (count > 1.0){
+    while (count > 1u){
         res = mul_complex(res,z);
-        count -= 1.0;
+        count -= 1u;
     }
     return res;
 }
@@ -110,22 +110,27 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let c = vec2(x,y);
 
     var n = 0.0;
-    let max = 2500.0;
+    let max = 500.0;
     
-    let escape_radius = 20.0;
+    let escape_radius = 25.0;
     let z_0 = z;
     while (length(z) <= escape_radius){
         // z = mul_complex(z, z) + c;
-        // z = pow_complex(z, 3.3) + c;
+        // z = simple_pow_complex(z, 4u) + c;
         // z = mul_complex(z,mul_complex(z,z)) + c;
         // z = mul_complex(mul_complex(mul_complex(z,z),z),z) + c;
         // z = mul_complex(z,z) / (z+c);
         // z = div_complex(mul_complex(mul_complex(z,z),z), (3.0*mul_complex(z,z)));
         // z = div_complex(simple_pow_complex(z,15.0), (3.0*mul_complex(z,z))) + c;
-        z = pow_complex(div_complex(mul_complex(z,z)+ c, 2.0*z), 0.8);
+        // z = pow_complex(div_complex(mul_complex(z,z)+ c, 2.0*z), 0.8);
+        // z = div_complex(mul_complex(z,z), c) + c;
+        // z = div_complex(mul_complex(z,z), mul_complex(c,z)) + c;
+
+        
+        let foo = simple_pow_complex(z,3u);
+        z = div_complex(mul_complex(foo,z)+ vec2(2.0,0.0), foo+ vec2(1.0,0.0))+ c;
 
         n = n + (1.0/max);
-
         if (n > 1.0){
             return vec4<f32>(0.0, 0.0, 0.0, 1.0);
         }
