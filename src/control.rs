@@ -26,13 +26,27 @@ fn update_focus_for_mandelbrot_material(
     if keys.pressed(KeyCode::D) {
         delta_x -= speed;
     }
-
     let mut delta_y = 0.0;
     if keys.pressed(KeyCode::W) {
         delta_y += speed;
     }
     if keys.pressed(KeyCode::S) {
         delta_y -= speed;
+    }
+
+    let mut delta_z_x = 0.0;
+    if keys.pressed(KeyCode::J) {
+        delta_z_x += speed;
+    }
+    if keys.pressed(KeyCode::L) {
+        delta_z_x -= speed;
+    }
+    let mut delta_z_y = 0.0;
+    if keys.pressed(KeyCode::I) {
+        delta_z_y += speed;
+    }
+    if keys.pressed(KeyCode::K) {
+        delta_z_y -= speed;
     }
 
     let mut delta_zoom = 0.0;
@@ -47,6 +61,8 @@ fn update_focus_for_mandelbrot_material(
         let zoom_scaler = f32::powf(material.1.focus.zoom, 3.0);
         material.1.focus.x += delta_x / (zoom_scaler * 0.03125);
         material.1.focus.y += delta_y / (zoom_scaler * 0.03125);
+        material.1.focus.z_x += delta_z_x;
+        material.1.focus.z_y += delta_z_y;
         material.1.focus.zoom += delta_zoom;
         println!("{:?}", material.1.focus);
     }

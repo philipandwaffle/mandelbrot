@@ -16,12 +16,30 @@
 // }
 
 mod control;
-use bevy::{prelude::*, reflect::TypeUuid, render::render_resource::*};
+use bevy::{
+    prelude::*,
+    reflect::TypeUuid,
+    render::render_resource::*,
+    window::{PresentMode, WindowMode},
+};
 use control::ControlPlugin;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "Mandelbrot Explore".into(),
+                resolution: (1900., 1280.).into(),
+                present_mode: PresentMode::AutoVsync,
+                mode: WindowMode::BorderlessFullscreen,
+                // Tells wasm to resize the window according to the available canvas
+                fit_canvas_to_parent: true,
+                // Tells wasm not to override default event handling, like F5, Ctrl+R etc.
+                prevent_default_event_handling: false,
+                ..default()
+            }),
+            ..default()
+        }))
         .add_plugin(MaterialPlugin::<MandelbrotMaterial>::default())
         .add_plugin(ControlPlugin)
         .add_startup_system(setup)
@@ -43,6 +61,8 @@ fn setup(
             focus: Focus {
                 x: 0.0,
                 y: 0.0,
+                z_x: 0.0,
+                z_y: 0.0,
                 zoom: 4.0,
             },
         }),
@@ -58,7 +78,7 @@ fn setup(
 
     // camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 7.5).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(0.0, 0.0, 5.5).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 }
@@ -66,6 +86,8 @@ fn setup(
 struct Focus {
     x: f32,
     y: f32,
+    z_x: f32,
+    z_y: f32,
     zoom: f32,
 }
 
