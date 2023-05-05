@@ -95,7 +95,7 @@ fn div_complex(c1: vec2<f32>, c2: vec2<f32>) -> vec2<f32>{
     let d = c2[1];
 
     let x = (a*c + b*d) / (c*c + d*d);
-    let y = (b*c + a*d) / (c*c + d*d);
+    let y = (b*c - a*d) / (c*c + d*d);
 
     return vec2(x, y);
 }
@@ -106,29 +106,35 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let x = ((in.uv.x - 0.5) * ((16.0* 32.0) / zoom * 0.2)) - focus.x;
     let y = ((in.uv.y - 0.5) * ((9.0 * 32.0) / zoom * 0.2)) - focus.y;
 
-    var z = vec2(focus.z_x, focus.z_x);
-    let c = vec2(x,y);
+    var z = vec2(x, y);
+    let c = vec2(x, y);    
 
     var n = 0.0;
     let max = 500.0;
     
-    let escape_radius = 25.0;
+    let r = 2.5;
     let z_0 = z;
-    while (length(z) <= escape_radius){
+    while (length(z) <= r){
+        // let c = vec2(r/2.0*(1.0-(r/2.0)),0.0);
         // z = mul_complex(z, z) + c;
         // z = simple_pow_complex(z, 4u) + c;
         // z = mul_complex(z,mul_complex(z,z)) + c;
         // z = mul_complex(mul_complex(mul_complex(z,z),z),z) + c;
-        // z = mul_complex(z,z) / (z+c);
+        
         // z = div_complex(mul_complex(mul_complex(z,z),z), (3.0*mul_complex(z,z)));
-        // z = div_complex(simple_pow_complex(z,15.0), (3.0*mul_complex(z,z))) + c;
+        // z = div_complex(simple_pow_complex(z,15u), (3.0*mul_complex(z,z))) + c;
         // z = pow_complex(div_complex(mul_complex(z,z)+ c, 2.0*z), 0.8);
         // z = div_complex(mul_complex(z,z), c) + c;
         // z = div_complex(mul_complex(z,z), mul_complex(c,z)) + c;
-
         
-        let foo = simple_pow_complex(z,3u);
-        z = div_complex(mul_complex(foo,z)+ vec2(2.0,0.0), foo+ vec2(1.0,0.0))+ c;
+        // let top = pow_complex((z - vec2(1.0, 0.0)), 3.0);
+        // let bottom = mul_complex(mul_complex(z, z), vec2(3.0, 0.0));
+        // z = z - div_complex(top, bottom) + c;
+
+        let top = pow_complex(z, 2.0) + c - vec2(1.0, 0.0);
+        let bottom = mul_complex(z, vec2(2.0, 0.0)) + c - vec2(2.0, 0.0);
+        z = pow_complex(div_complex(top, bottom), 5.0);
+        // z = z - div_complex(top, bottom) + c;
 
         n = n + (1.0/max);
         if (n > 1.0){
@@ -136,5 +142,5 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
         }
     }
     
-    return hsv_to_rgb(pow(n, 0.6)*360.0, 0.5, 0.5);
+    return hsv_to_rgb(pow(n, 0.6)*360.0, 0.3, 0.8);
 }
