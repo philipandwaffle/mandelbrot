@@ -78,6 +78,17 @@ fn pow_complex(z: vec2<f32>, n: f32) -> vec2<f32>{
     return vec2(x,y);
 }
 
+fn sqrt_complex(z: vec2<f32>) -> vec2<f32>{
+    let a = z[0];
+    let b = z[1];
+    let l = sqrt(a*a+ b*b);
+
+    let x = sqrt((l+a)/2.0);
+    let y = (b/abs(b))*sqrt((l-a)/2.0);
+
+    return vec2(x,y);
+}
+
 fn simple_pow_complex(z: vec2<f32>, n: u32) -> vec2<f32>{
     var res = z;
     var count = n;
@@ -133,7 +144,7 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
 
         let top = pow_complex(z, 2.0) + c - vec2(1.0, 0.0);
         let bottom = mul_complex(z, vec2(2.0, 0.0)) + c - vec2(2.0, 0.0);
-        z = pow_complex(div_complex(top, bottom), 5.0);
+        z = pow_complex(div_complex(top, bottom),0.5);
         // z = z - div_complex(top, bottom) + c;
 
         n = n + (1.0/max);
