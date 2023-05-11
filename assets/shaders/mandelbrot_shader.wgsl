@@ -113,21 +113,22 @@ fn div_complex(c1: vec2<f32>, c2: vec2<f32>) -> vec2<f32>{
 
 @fragment
 fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
-    let zoom = pow(focus.zoom, 3.0);
-    let x = ((in.uv.x - 0.5) * ((16.0* 32.0) / zoom * 0.2)) - focus.x;
-    let y = ((in.uv.y - 0.5) * ((9.0 * 32.0) / zoom * 0.2)) - focus.y;
+    let zoom = pow(2.0, focus.zoom);
+    
+    let x = ((in.uv.x - 0.5) * ((225.6) / zoom * 0.2)) - focus.x;
+    let y = ((in.uv.y - 0.5) * ((150.4) / zoom * 0.2)) - focus.y;
 
     var z = vec2(x, y);
-    let c = vec2(x, y);    
+    let c = vec2(x, y);
 
     var n = 0.0;
-    let max = 500.0;
+    let max = 100.0;
     
     let r = 2.5;
     let z_0 = z;
     while (length(z) <= r){
         // let c = vec2(r/2.0*(1.0-(r/2.0)),0.0);
-        // z = mul_complex(z, z) + c;
+        z = mul_complex(z, z) + c;
         // z = simple_pow_complex(z, 4u) + c;
         // z = mul_complex(z,mul_complex(z,z)) + c;
         // z = mul_complex(mul_complex(mul_complex(z,z),z),z) + c;
@@ -142,9 +143,9 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
         // let bottom = mul_complex(mul_complex(z, z), vec2(3.0, 0.0));
         // z = z - div_complex(top, bottom) + c;
 
-        let top = pow_complex(z, 2.0) + c - vec2(1.0, 0.0);
-        let bottom = mul_complex(z, vec2(2.0, 0.0)) + c - vec2(2.0, 0.0);
-        z = pow_complex(div_complex(top, bottom),0.5);
+        // let top = pow_complex(z, 2.0) + c - vec2(1.0, 0.0);
+        // let bottom = mul_complex(z, vec2(2.0, 0.0)) + c - vec2(2.0, 0.0);
+        // // z = pow_complex(div_complex(top, bottom),0.5);
         // z = z - div_complex(top, bottom) + c;
 
         n = n + (1.0/max);

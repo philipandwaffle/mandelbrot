@@ -1,25 +1,9 @@
-// use num_complex::Complex64;
-// fn main() {
-//     println!("Hello, world!");
-
-//     let m = mandelbrot::Mandelbrot {
-//         id: 0,
-//         x_min: -2.0,
-//         x_max: 1.0,
-//         y_max: 1.0,
-//         y_min: -1.0,
-//         pixel_per_unit: 1000,
-//         iteration_max: 10000,
-//         centre_of_barrier: Complex64::new(0.0, 0.0),
-//     };
-//     m.gen_image().save("test_003.jpg");
-// }
-
 mod control;
 use bevy::{
+    math::vec2,
     prelude::*,
     reflect::TypeUuid,
-    render::render_resource::*,
+    render::{camera::ScalingMode, render_resource::*},
     window::{PresentMode, WindowMode},
 };
 use control::ControlPlugin;
@@ -29,7 +13,8 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Mandelbrot Explore".into(),
-                resolution: (1900., 1280.).into(),
+                // resolution: (1900., 1280.).into(),
+                resolution: (2256., 1504.).into(),
                 present_mode: PresentMode::AutoVsync,
                 mode: WindowMode::BorderlessFullscreen,
                 // Tells wasm to resize the window according to the available canvas
@@ -51,9 +36,11 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<MandelbrotMaterial>>,
 ) {
+    //screen
     commands.spawn(MaterialMeshBundle {
         mesh: meshes.add(Mesh::from(shape::Quad {
-            size: Vec2::new(8.0, 4.5),
+            // size: Vec2::new(8.0, 4.5),
+            size: Vec2::new(2.256, 1.504),
             flip: false,
         })),
         transform: Transform::from_xyz(0.0, 0.0, 0.0),
@@ -69,16 +56,18 @@ fn setup(
         ..default()
     });
 
-    // commands.spawn(MaterialMeshBundle {
-    //     mesh: meshes.add(Mesh::from(shape::Cube::default())),
-    //     transform: Transform::from_xyz(0.0, 0.0, 0.0),
-    //     material: materials.add(CustomMaterial {}),
-    //     ..default()
-    // });
-
     // camera
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(0.0, 0.0, 5.5).looking_at(Vec3::ZERO, Vec3::Y),
+        projection: Projection::Orthographic(OrthographicProjection {
+            scale: 1.0,
+            scaling_mode: ScalingMode::FixedVertical(1.0),
+            area: Rect {
+                min: vec2(-1.128, -0.752),
+                max: vec2(1.128, 0.752),
+            },
+            ..default()
+        }),
         ..default()
     });
 }

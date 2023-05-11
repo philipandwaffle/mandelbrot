@@ -64,6 +64,6 @@ fn update_focus_for_mandelbrot_material(
         material.1.focus.z_x += delta_z_x;
         material.1.focus.z_y += delta_z_y;
         material.1.focus.zoom += delta_zoom;
-        println!("{:?}", material.1.focus);
+        // println!("{:?}", material.1.focus);
     }
 }
